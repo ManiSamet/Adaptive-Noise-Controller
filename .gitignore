@@ -1,0 +1,24 @@
+#Build folders
+Debug/
+Release/
+build/
+
+#Generated binaries
+*.elf
+*.bin
+*.hex
+*.map
+*.list
+*.o
+
+#IDE config files
+.settings/
+.metadata/
+*.launch
+*.log
+*.tmp
+*.bak
+
+#OS files
+.DS_Store
+Thumbs.db
