@@ -1,4 +1,4 @@
-	/* USER CODE BEGIN Header */
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file           : main.c
@@ -24,6 +24,7 @@
 #define ARM_MATH_CM4
 #include <string.h>
 #include "arm_math.h"//CMSIS_DSP
+#include <stdio.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -61,6 +62,7 @@ I2S_HandleTypeDef hi2s2;
 DMA_HandleTypeDef hdma_spi2_tx;
 
 UART_HandleTypeDef huart2;
+DMA_HandleTypeDef hdma_usart2_tx;
 
 /* USER CODE BEGIN PV */
 arm_lms_instance_f32 noise_lms;
@@ -176,12 +178,16 @@ int main(void)
 	  //Perform LMS FIR Filtering for 512 samples of ref + primary
 	  arm_lms_f32(&noise_lms,input,ref,output,error,NUM_BLOCKS);
 
-	  for(int i = 0; i < NUM_BLOCKS;i++){// as big as BLOCK Size
-		  i2s_output[i] = (int16_t)(output[i]*32767.0f);//full range 16-bit integer [-32678,32768]
-	  }
+	  const size_t data_bytes = NUM_BLOCKS * sizeof(float32_t); // 1024 bytes
+	  HAL_UART_Transmit_DMA(&huart2, (uint8_t*)error, data_bytes);
+//	  for(int i = 0; i < NUM_BLOCKS;i++){// as big as BLOCK Size
+//		  i2s_output[i] = (int16_t)(output[i]*32767.0f);//full range 16-bit integer [-32678,32768]
+//	  }
+//
+//
+//	  HAL_I2S_Transmit_DMA(&hi2s2,(uint16_t*)i2s_output,NUM_BLOCKS);//transmit i2s via DMA
 
 
-	  HAL_I2S_Transmit_DMA(&hi2s2,(uint16_t*)i2s_output,NUM_BLOCKS);//transmit i2s via dma
 
 	  adc_buf_flag = 0;
 
@@ -351,7 +357,7 @@ static void MX_USART2_UART_Init(void)
 
   /* USER CODE END USART2_Init 1 */
   huart2.Instance = USART2;
-  huart2.Init.BaudRate = 115200;
+  huart2.Init.BaudRate = 921600;
   huart2.Init.WordLength = UART_WORDLENGTH_8B;
   huart2.Init.StopBits = UART_STOPBITS_1;
   huart2.Init.Parity = UART_PARITY_NONE;
@@ -382,6 +388,9 @@ static void MX_DMA_Init(void)
   /* DMA1_Stream4_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA1_Stream4_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA1_Stream4_IRQn);
+  /* DMA1_Stream6_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream6_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream6_IRQn);
   /* DMA2_Stream0_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA2_Stream0_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA2_Stream0_IRQn);
