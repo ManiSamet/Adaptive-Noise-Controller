@@ -1,1 +1,1 @@
-Please refer to the [Adaptive Noise Controller PDF]([Adaptive-Noise-Controller.pdf)](https://github.com/ManiSamet/Adaptive-Noise-Controller/blob/main/Adaptive%20Noise%20Controller.pdf) for full explanation of system and respective design choices made to make this project function correctly.
+Please refer to the [Adaptive Noise Controller PDF]([Adaptive-Noise-Controller.pdf])for full explanation of system and respective design choices made to make this project function correctly.
